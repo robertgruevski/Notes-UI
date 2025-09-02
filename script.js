@@ -45,10 +45,6 @@ function getNoteById(id) {
         .then(response => displayNoteInForm(response));
 }
 
-function populateForm(id) {
-    getNoteById(id);
-}
-
 function displayNotes(notes) {
     let allNotes = '';
 
@@ -65,7 +61,7 @@ function displayNotes(notes) {
 
     document.querySelectorAll('.note').forEach(note => {
         note.addEventListener('click', function () {
-            populateForm(note.dataset.id);
+            getNoteById(note.dataset.id);
         });
     });
 }
