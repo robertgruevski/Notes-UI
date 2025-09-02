@@ -4,33 +4,12 @@ const titleInput = document.querySelector('#title');
 const descriptionInput = document.querySelector('#description');
 const notesContainer = document.querySelector('#notes__container');
 
-function addNote(title, description) {
-    const body = {
-        title: title,
-        description: description,
-        isVisible: true
-    }
-
-    fetch(`https://localhost:7174/api/notes`, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => {
-            response.json()
-            clearForm();
-            getAllNotes();
-        })
-}
 
 function clearForm() {
     titleInput.value = '';
     descriptionInput.value = '';
     deleteButton.setAttribute('hidden', true);
 }
-
 function displayNoteInForm(note) {
     titleInput.value = note.title;
     descriptionInput.value = note.description;
@@ -38,13 +17,6 @@ function displayNoteInForm(note) {
     deleteButton.setAttribute('data-id', note.id);
     saveButton.setAttribute('data-id', note.id);
 }
-
-function getNoteById(id) {
-    fetch(`https://localhost:7174/api/notes/${id}`)
-        .then(data => data.json())
-        .then(response => displayNoteInForm(response));
-}
-
 function displayNotes(notes) {
     let allNotes = '';
 
@@ -66,14 +38,31 @@ function displayNotes(notes) {
     });
 }
 
-function getAllNotes() {
-    fetch(`https://localhost:7174/api/notes`)
-        .then(data => data.json())
-        .then(response => displayNotes(response));
+function addNote(title, description) {
+    const body = {
+        title: title,
+        description: description,
+        isVisible: true
+    }
+
+    fetch(`https://localhost:7174/api/notes`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            response.json()
+            clearForm();
+            getAllNotes();
+        })
 }
-
-getAllNotes();
-
+function getNoteById(id) {
+    fetch(`https://localhost:7174/api/notes/${id}`)
+        .then(data => data.json())
+        .then(response => displayNoteInForm(response));
+}
 function updateNote(id, title, description) {
     const body = {
         title: title,
@@ -94,16 +83,11 @@ function updateNote(id, title, description) {
             getAllNotes();
         })
 }
-
-saveButton.addEventListener('click', () => {
-    const id = saveButton.dataset.id;
-    if (id) {
-        updateNote(id, titleInput.value, descriptionInput.value);
-    } else {
-        addNote(titleInput.value, descriptionInput.value);
-    }
-});
-
+function getAllNotes() {
+    fetch(`https://localhost:7174/api/notes`)
+        .then(data => data.json())
+        .then(response => displayNotes(response));
+}
 function deleteNote(id) {
     fetch(`https://localhost:7174/api/notes/${id}`, {
         method: 'DELETE',
@@ -118,7 +102,17 @@ function deleteNote(id) {
         });
 }
 
+saveButton.addEventListener('click', () => {
+    const id = saveButton.dataset.id;
+    if (id) {
+        updateNote(id, titleInput.value, descriptionInput.value);
+    } else {
+        addNote(titleInput.value, descriptionInput.value);
+    }
+});
 deleteButton.addEventListener('click', () => {
     const id = deleteButton.dataset.id;
     deleteNote(id);
 });
+
+getAllNotes();
